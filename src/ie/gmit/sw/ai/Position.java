@@ -1,29 +1,22 @@
 package ie.gmit.sw.ai;
 
-/**
- * The Position object will direct a character to an x & y position within a 2
- * dimensional table
- * 
- * @author Daniel Verdejo - G00282931
- *
- */
+// Adrian Sypos
+
 public class Position {
 
 	private int x;
 	private int y;
 
-	public Position () {}
-	
-	private Position(int x, int y) {
+	public Position(int x, int y) {
 		this.x = x;
 		this.y = y;
-	}// constructor
+	}
 
-	public static Position getPosition(char target, char[][] cipherTable) {
+	public static Position getPos(char target, char[][] table) {
 
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
-				if (target == cipherTable[i][j]) {
+				if (target == table[i][j]) {
 					return new Position(i, j);
 				}
 			}
@@ -31,11 +24,11 @@ public class Position {
 		return null;
 	}
 	
-	public int getPosX() {
+	public int getX() {
 		return this.x;
 	}
 	
-	public int getPosY() {
+	public int getY() {
 		return this.y;
 	}
 	

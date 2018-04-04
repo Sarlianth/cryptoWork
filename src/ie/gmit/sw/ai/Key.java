@@ -128,6 +128,4 @@ public class Key {
 			}//for
 			return new String(newKey);
 	}//permutate
-
-	
 }

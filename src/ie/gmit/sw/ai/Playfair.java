@@ -1,26 +1,9 @@
 package ie.gmit.sw.ai;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-/**
- * The Playfair cipher is a manual symmetric encryption technique and was the
- * first literal digram substitution cipher. The technique encrypts pairs of
- * letters (bigrams or digrams), instead of single letters as in the simple
- * substitution cipher and rather more complex Vigenère cipher systems then in
- * use. The Playfair is thus significantly harder to break since the frequency
- * analysis used for simple substitution ciphers does not work with it. The
- * frequency analysis of bigrams is possible, but considerably more difficult.
- * With 600[1] possible bigrams rather than the 26 possible monograms (single
- * symbols, usually letters in this context), a considerably larger cipher text
- * is required in order to be useful. Reference:
- * https://en.wikipedia.org/wiki/Playfair_cipher
- * 
- * @author Daniel Verdejo - G00282931
- *
- */
+//Adrian Sypos
 
 public class Playfair {
 
@@ -65,51 +48,13 @@ public class Playfair {
 		
 		StringBuilder sb = new StringBuilder();
 		
-//		for(index = 0; index < this.cipherText.length() / 2; index ++) {
-//			char a = this.cipherText.charAt(2 * index);
-//			char b = this.cipherText.charAt(2 * index + 1);
-//			int r1 = (int) Position.getPosition(a, cipherTable).getPosX();
-//			int c1 = (int) Position.getPosition(a, cipherTable).getPosY();
-//			int r2 = (int) Position.getPosition(b, cipherTable).getPosX();
-//			int c2 = (int) Position.getPosition(b, cipherTable).getPosY();
-//
-//			if (r1 == r2) {
-//				c1 = (c1 + 4) % 5; 
-//				c2 = (c2 + 4) % 5;
-//			} else if (c1 == c2) {
-//				r1 = (r1 + 4) % 5;
-//				r2 = (r2 + 4) % 5;
-//			} else {
-//		        int temp = c1;
-//		        c1 = c2;
-//		        c2 = temp;
-//		    }
-//			sb.append(cipherTable[r1][c1] +""+ cipherTable[r2][c2]);
-//		}
-		
-
-		return cipherCrack(cipherTable, 0, sb);
-	}// decrypt
-
-	/**
-	 * The cipher method will recursively scan through each letter getting its
-	 * position in the 2d array and use this to crack the cipher text
-	 * 	 *
-	 * @param table
-	 * @param cipherText
-	 * @param index
-	 * @return this
-	 */
-	private String cipherCrack(char[][] table, int index, StringBuilder sb) {
-		//StringBuilder sb = new StringBuilder();
-		
-		if(index < this.cipherText.length() / 2) {
+		for(index = 0; index < this.cipherText.length() / 2; index ++) {
 			char a = this.cipherText.charAt(2 * index);
 			char b = this.cipherText.charAt(2 * index + 1);
-			int r1 = (int) Position.getPosition(a, table).getPosX();
-			int c1 = (int) Position.getPosition(a, table).getPosY();
-			int r2 = (int) Position.getPosition(b, table).getPosX();
-			int c2 = (int) Position.getPosition(b, table).getPosY();
+			int r1 = (int) Position.getPos(a, cipherTable).getX();
+			int c1 = (int) Position.getPos(a, cipherTable).getY();
+			int r2 = (int) Position.getPos(b, cipherTable).getX();
+			int c2 = (int) Position.getPos(b, cipherTable).getY();
 
 			if (r1 == r2) {
 				c1 = (c1 + 4) % 5; 
@@ -122,11 +67,50 @@ public class Playfair {
 		        c1 = c2;
 		        c2 = temp;
 		    }
-			sb.append(table[r1][c1] +""+ table[r2][c2]);
-			
-			return cipherCrack(table, 1 + index, sb);
-		}else return sb.toString();
-	}// cipherCrack
+			sb.append(cipherTable[r1][c1] +""+ cipherTable[r2][c2]);
+		}
+		
+		return sb.toString();
+
+		//return cipherCrack(cipherTable, 0, sb);
+	}// decrypt
+
+	/**
+	 * The cipher method will recursively scan through each letter getting its
+	 * position in the 2d array and use this to crack the cipher text
+	 * 	 *
+	 * @param table
+	 * @param cipherText
+	 * @param index
+	 * @return this
+	 */
+//	private String cipherCrack(char[][] table, int index, StringBuilder sb) {
+//		//StringBuilder sb = new StringBuilder();
+//		
+//		if(index < this.cipherText.length() / 2) {
+//			char a = this.cipherText.charAt(2 * index);
+//			char b = this.cipherText.charAt(2 * index + 1);
+//			int r1 = (int) Position.getPosition(a, table).getPosX();
+//			int c1 = (int) Position.getPosition(a, table).getPosY();
+//			int r2 = (int) Position.getPosition(b, table).getPosX();
+//			int c2 = (int) Position.getPosition(b, table).getPosY();
+//
+//			if (r1 == r2) {
+//				c1 = (c1 + 4) % 5; 
+//				c2 = (c2 + 4) % 5;
+//			} else if (c1 == c2) {
+//				r1 = (r1 + 4) % 5;
+//				r2 = (r2 + 4) % 5;
+//			} else {
+//		        int temp = c1;
+//		        c1 = c2;
+//		        c2 = temp;
+//		    }
+//			sb.append(table[r1][c1] +""+ table[r2][c2]);
+//			
+//			return cipherCrack(table, 1 + index, sb);
+//		}else return sb.toString();
+//	}// cipherCrack
 
 	public List<Position> getPositions() {
 		return positions;
