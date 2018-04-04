@@ -1,6 +1,9 @@
 package ie.gmit.sw.ai;
 
-// Adrian Sypos
+/*
+ * Adrian Sypos - G00309646
+ * Position - Class representing position on the cipher table, handy to use for moving X and Y 
+ */
 
 public class Position {
 

@@ -6,66 +6,63 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+
+/*
+ * Adrian Sypos - G00309646
+ * Grams - Class responsible for managing 4grams, loading them into a map and actually grading the text whether or not it's english readible
+ */
+
 public class Grams {
 	
-	private String fileName;
-	private Map<String, Integer> nGrams;
+	private String filename;
+	private Map<String, Integer> grams;
 	private long no;
 	
 	public Grams(String fileName) {
-		this.fileName = fileName;
-		this.nGrams = new HashMap<String, Integer>();
-	}// Constructor
+		this.filename = fileName;
+		this.grams = new HashMap<String, Integer>();
+	}
 
-	public Map<String, Integer> loadNGrams()  throws Exception {
+	//Method thats resposible for loading the 4grams into a hashMap
+	public Map<String, Integer> loadGrams()  throws Exception {
 		long count = 0;
-		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(fileName))));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filename))));
 		String line = "";
-		//System.out.println("Loading n-grams...");
+		
+		//Loading grams into map
 		while((line = br.readLine()) != null) {
-			nGrams.put(line.split(" ")[0], Integer.parseInt(line.split(" ")[1]));
+			grams.put(line.split(" ")[0], Integer.parseInt(line.split(" ")[1]));
+			//Sum up the total 4grams
 			count += Double.parseDouble(line.split(" ")[1]);
 		}
+		//Save the total number of 4grams
 		setNo(count);
 		br.close();	
-		return this.nGrams;
+		return this.grams;
 	}
 	
+	//Method thats responsible for scoring the text whether or not its human readible (english)
 	public double scoreText(String cipherText) {
 		double score = 0;
 		int frequency = 0;
 		
-		//score += Math.log10((double) ((nGrams.get(text.substring(i, i+4)) != null) ? nGrams.get(text.substring(i, i+4)) : 1))/this.count);
+		//Loop through the ciptherText and compare the 4grams
 		for(int i=0; i< cipherText.length() - 4; i++){
-			if(nGrams.get(cipherText.substring(i, i+4)) != null){
-				frequency = nGrams.get(cipherText.substring(i, i+4));
+			//Check if the 4gram is actually there or is it null
+			if(grams.get(cipherText.substring(i, i+4)) != null){
+				//If the 4gram exists get its substring and use as frequency to sum up the score
+				frequency = grams.get(cipherText.substring(i, i+4));
 			}else{
+				//If 4gram doesnt exist or is null, set frequency to 1
 				frequency = 1;
 			}
+			//Calculate the score and sum it all up
 			score += Math.log10((double) frequency/this.getNo());
 		}
 		
+		//Return the score
 		return score;
 	}
-	
-//	private double quadGramProbability(String key) {
-//		return Math.log10((double) getNGramFrequencyCount(key) / this.no);
-//	}
-//	
-//	public double scoreText(String textString) {
-//		String text = textString.replace(" ",  "");
-//		
-//		return IntStream.range(0, (text.length() - 4 + 1))
-//				.mapToObj(i -> new String(text.toCharArray(), i, 4))
-//				.mapToDouble(quadgram -> quadGramProbability(quadgram)).sum();
-//	}
-//	
-//	public int getNGramFrequencyCount(String key) {
-//		if(this.nGrams.get(key.toUpperCase()) == null) {
-//			return 1;
-//		}
-//		return this.nGrams.get(key.toUpperCase());
-//	}
 	
 	public void setNo(long no) {
 		this.no = no;
@@ -74,5 +71,4 @@ public class Grams {
 	public long getNo() {
 		return this.no;
 	}
-	
 }

@@ -1,54 +1,59 @@
 package ie.gmit.sw.ai;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+
+/*
+ * Adrian Sypos - G00309646
+ * Key - Class containing the Key object and methods to interact with the key
+ */
 
 public class Key {
 	
 	private static Key instance;
 	
-	private Key() {
+	public Key() {
+		//Default constructor
 	}
 	
+	//Create new object instance if doesn't exist
 	public static Key keyInstance() {
 		return (instance == null) ? new Key() : instance;
 	}
-	
-	/**
-	 * The generateKey method Takes a string and formats it to the correct lenght.
-	 * Once the key is the correct length we then inspect each character and replace
-	 * any recurring letters with an X, remove blank spaces ,and remove the letter J
-	 * completely. we then do one final check to ensure our key contains 25 unique
-	 * letters.
-	 * 
-	 * @param key
-	 * @return cipherKey
+
+	/*
+	 * Method to generate a key and format it to the length of 35
+	 * Replace any double characters with X, remove J and blanks and any other characters that are inappropriate
 	 */
 	public String generateKey() {
+		//Create a String that will be returned when formatted
 		StringBuilder newCipherKey = new StringBuilder();
+		//Default cipherKey 35 length, without letter J
 		String cipherKey = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
-		newCipherKey.append((cipherKey.length() < 25) ? new FileParser(null).removeRecurringChars(cipherKey + "ABCDEFGHIKLMNOPQRSTUVWXYZ") : cipherKey);
+		//If the cipherKey length is less than 25 remove all recurring characters and add default key, otherwise just use the default key
+		newCipherKey.append((cipherKey.length() < 25) ? new FileWorker(null).removeRecurringChars(cipherKey + "ABCDEFGHIKLMNOPQRSTUVWXYZ") : cipherKey);
 		
+		//For loop to remove all reoccuring characters, loop for each element in the default key
 		for (int i = 0; i < cipherKey.length(); i++) {	
+			//Loop for each element in the cipherKey string
 			for (int j = newCipherKey.length() - 1; j > 0; j--) {
 				if (cipherKey.charAt(i) == newCipherKey.charAt(j)) {
-					// remove non unique letters
+					// Delete character
 					if (i < j) {
 						newCipherKey.deleteCharAt(j);
-					} // do not replace the first instance of the letter
-				} // IF
-			} // for each element in the cipherKey
-		} // for each element in the original key
-		//System.out.println("new key: " + newCipherKey.toString());
+					}
+				}
+			}
+		}
+
+		//Finally return the generated key
 		return newCipherKey.toString();
 	}
 	
+	//Method to shuffle the key
 	public String shuffleKey(String originalKey) {
-		//System.out.println(originalKey);
-		Random r = new SecureRandom();
+		//Create new secureRandom object
+		SecureRandom r = new SecureRandom();
+		//Random integer value
 		int x = r.nextInt(100);
 		
 		if(x >= 0 && x < 2) {
@@ -64,68 +69,67 @@ public class Key {
 		} else {
 			int a = r.nextInt(originalKey.length()-1);
 			int b = r.nextInt(originalKey.length()-1);
-			//System.out.printf("\nswapping chars %d with %d\n",a,b);
 			b = (a == b) ? (b == originalKey.length()-1) ? b - 1 : b + 1 : r.nextInt(originalKey.length()-1);
 			char[] res = originalKey.toCharArray();
 			char tmp = res[a];
 			res[a] = res[b];
 			res[b] = tmp;
 			return new String(res);
-		}// if else shuffle key
-	}//shuffleKey
+		}
+	}
 	
+	//Method to flip rows
 	private String flipRows(String key) {
-		//System.out.println("flipping all rows");
-
-		String[] res = new String[5];
+		String[] rows = new String[5];
 		StringBuilder sb = new StringBuilder();
 		
 		for(int i = 0; i < 5; i++) {
-			res[i] = key.substring(i*5, i*5 + 5);
-			res[i] = new StringBuffer(res[i]).reverse().toString();
-			sb.append(res[i]);
+			rows[i] = key.substring(i*5, i*5 + 5);
+			rows[i] = new StringBuffer(rows[i]).reverse().toString();
+			sb.append(rows[i]);
 		}
 		return sb.toString();
-	}// flip rows
+	}
 	
+	//Method to flip columns
 	private String flipCols(String key) {
-		//System.out.println("flipping all columns");
-		char[] res = key.toCharArray();
-		int l = key.length() - (key.length()/5);
+		char[] cols = key.toCharArray();
+		int length = key.length() - (key.length()/5);
 		
 		for(int i = 0; i < key.length() / 5; i++) {
 			for(int j = 0; j < key.length() / 5; j++) {
 				char tmp = key.charAt(i*5 + j);
-				res[(i*5) + j] =  key.charAt(l + j);
-				res[l + j] =  tmp;
+				cols[(i*5) + j] =  key.charAt(length + j);
+				cols[length + j] =  tmp;
 			}
-			l -= 5;
+			length -= 5;
 		}
-		return new String(res);
-	}//flipCols
+		return new String(cols);
+	}
 	
+	//Method to swap rows
 	private String swapRows(String key, int r1, int r2) {	
-		//System.out.printf("\nswapping rows %d with %d\n",r1,r2);
-		return (r1 == r2) ? swapRows(key, new SecureRandom().nextInt(4), new SecureRandom().nextInt(4)) :  permutate(key, r1, r2, true);
-	}//swapRows
+		return (r1 == r2) ? swapRows(key, new SecureRandom().nextInt(4), new SecureRandom().nextInt(4)) :  permute(key, r1, r2, true);
+	}
 	
+	//Method to swap columns
 	private String swapCols(String key, int c1, int c2) {
-		//System.out.printf("\nswapping cols %d with %d\n",c1,c2);
-		return (c1 == c2) ? swapCols(key, new SecureRandom().nextInt(4), new SecureRandom().nextInt(4)) : permutate(key, c1, c2, false);
-	}//swapcols
+		return (c1 == c2) ? swapCols(key, new SecureRandom().nextInt(4), new SecureRandom().nextInt(4)) : permute(key, c1, c2, false);
+	}
 	
-	private String permutate(String key, int a, int b, boolean isRows) {
+	//Method to permute the key
+	private String permute(String key, int a, int b, boolean rw) {
 			char[] newKey = key.toCharArray();
-			if(isRows) {
+			if(rw) {
 				a *= 5;
 				b *= 5;
 			} 
 			for(int i = 0; i < key.length() / 5 ; i++) {
-				int index = (isRows) ? i : i*5;
+				int index = (rw) ? i : i*5;
 				char tmp =  newKey[(index + a)];
 				newKey[(index + a)] = newKey[(index + b)];
 				newKey[(index + b)] = tmp;				
-			}//for
+			}
 			return new String(newKey);
-	}//permutate
+	}
 }

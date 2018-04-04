@@ -1,24 +1,26 @@
 package ie.gmit.sw.ai;
 
+/*
+ * Adrian Sypos - G00309646
+ * CipherBreaker - Class containing the main method, printing menu and allowing user to interact through command line UI
+ */
 
 public class CipherBreaker {
 
 	public static void main(String[] args) throws Exception, Throwable {
 		String cipherText = "HFZQLYVEDWNITIQPQDUVHYLGXZHFNYBKPACAZQHFVQIQCUUVYCBXABQZQZURHQDZHBKDMVZQHXRGURLQHTXZQVDFYXZHRGGWHBYEGXNYYEGKYVHFLQDBWDVQIZEAUCAHHPQIBRRVBREZNYYQAHPUQDUVHYZXGNRDEOZWQFKCLZZHXVRDEOFEINQZZKZPKDYDCAMEEQUDBCLDBKPAEDUVYCHFZQQEUMSVPBUMURLQHTXZXZCUHTVTPHMDLDRGMDLDVBHCMGUVYCQVPVDMSZXQCPDIQZLQKDUBEMTCYDDBCQGDFEUKQZVPCYUHKDIABDFVFEETGKIDOZEFURLQUVYCKDPTACYQUCFUPVVBBREZZXDTZPWCMEDILYTHZHADMUDBGQHBKIFEMDEWIZRGVQHTKCNWIEGNHCPLLUDPCOFTQGDPNWBYHCHFQZITQVGKUVYCHFBDQVHVHCHFDIYXHFBRUMLZKDZDFQFHNYLGSAPLQCCAZQHCPCBODITCVBMUHFDIYXHFBRUMLZKDLULIDLIDDLQRKWZQACYQUZBHZBDUBHQZUKUZEDGWTVBXABQZQZBUFEUFFTQVEKZQINAHMEPTDFNYFBIZEXBRRVBREZTCILEVFBEDHUBRWDLYTHFHIZNYCPOVBDLIZQHFQPQDUVHYLGCUNYOKDMPCHTXZPCGCHFDYLQDBLTHPQEKCGKTIQIBRVQHBQNDBRXBZEFRFVUEDQYNYMZCPBDHYLKCUXF";
-		System.out.println("pre decryption: " + cipherText);
+		
+		int OPTIMAL_TEMP = (int)((10 + 0.087 * (cipherText.length() - 84)));
+		int BEST_TEMP = OPTIMAL_TEMP / 3;
+		
+		Playfair playfair = new Playfair();
+		playfair.setCipherText(cipherText);
+		
 		long startTime = System.currentTimeMillis();
-		Playfair pf = new Playfair();
-		pf.setCipherText(cipherText);
-		String text = pf.decrypt("ABCDEFGHIKLMNOPQRSTUVWXYZ");
-		System.out.println(text);
-	
-		int temp = (int)((10 + 0.087 * (cipherText.length() - 84)));
-		System.out.println(temp);
-		SimulatedAnnealing sa = new SimulatedAnnealing(temp/3, 50000, cipherText);
-	
+
+		SimulatedAnnealing sa = new SimulatedAnnealing(BEST_TEMP, 50000, cipherText);
 		sa.annealing();
 		
-		long estimatedTime = System.currentTimeMillis() - startTime;
-		System.out.println("Execution time: " + (estimatedTime/1000) + "s");	
+		System.out.println("Execution time: " + ((System.currentTimeMillis() - startTime)/1000) + "s");	
 	}
 }
