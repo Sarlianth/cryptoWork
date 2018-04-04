@@ -3,6 +3,7 @@ package ie.gmit.sw.ai;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Random;
 
 public class SimulatedAnnealing {
@@ -16,7 +17,7 @@ public class SimulatedAnnealing {
 	private int temperature;
 	private int transitions;
 	
-	private HashMap<String, Double> nGrams; 
+	private Map<String, Integer> nGrams; 
 	
 	public SimulatedAnnealing(int temperature, int transitions, String cipherText) {
 		super();
@@ -30,49 +31,56 @@ public class SimulatedAnnealing {
 
 	}// construct
 	
-	public double annealing(String cipherText) throws Throwable {		
+	public void annealing(String cipherText) throws Throwable {		
 		
-		nGrams =  (HashMap<String, Double>) g.loadNGrams();		// load our quad grams 
-		String parent = key.generateKey();						// generate our key
+		nGrams = g.loadNGrams();								// load our quad grams 
+		//String parent = key.generateKey();					// generate our key
+		String parent = ("ABCDEFGHIKLMNOPQRSTUVWXYZ");
 		String decryptedText = pf.decrypt(parent);				// decrypt text using said key
 		double parentScore = g.scoreText(decryptedText);		// score the decrypted text
 		double bestScore = parentScore;							// set the preliminary best score
 		//System.out.println(bestScore);
 		double probability;
 		Random rand = new Random();
+		double startScore = bestScore;
 		
-		for(int temp = temperature; temp > 0; temp -= 1) {
-			for (int index = transitions; index >= 0; index--) {
+		for(int temp = temperature; temp > 0; temp--) {
+			for (int index = transitions; index > 0; index--) {
 				String child = key.shuffleKey(parent);			//  Change the parent key slightly to get child key, 
 				decryptedText = pf.decrypt(child);				// decrypt with the child key
-				double childScore = g.scoreText(decryptedText);	// Measure the fitness of the deciphered text using the child key	
+				double childScore = g.scoreText(decryptedText);	// Measure the fitness of the deciphered text using the child key
 				double delta = childScore - parentScore;		// get the delta 	
-				if(delta >= 0) {								// if the delta is over 0 this key is better
+				if(delta > 0) {								// if the delta is over 0 this key is better
 					parent = child;
 					parentScore = childScore;
 
 				} else  {
-					probability = Math.exp(delta/temp);
+					probability = (Math.exp((delta / temp)));
 					//System.out.println(probability);
 					//if(probability > ((rand.nextInt(32767)+1) / 32767)) { // prevent getting stuck
-					if(probability > 0.01) {
+					if(probability > rand.nextDouble()) {
+					//if(probability > 0.7){
 						parent = child;
 						parentScore = childScore;
 					}
 				}
-			
+				
+				//System.out.printf("\nBest hit at Temp: %d\n_________________________________\nBest Score: %f0.3\tFor Key: %s\nDecrypted message: %s\n", temp, bestScore, parent, pf.decrypt(parent));
+				
 				if(parentScore > bestScore) {
 					bestScore = parentScore;
 					String bestKey = parent;
-					System.out.printf("\nTransition: %d at Temp: %d\nBest Score: %f0.3\tFor Key: %s\nDecrypted message: %s\n", index, temp, bestScore, bestKey, decryptedText);
-					if(bestScore >= 550) break;
+					System.out.printf("\nBest Score: %f0.3\tFor Key: %s\n", bestScore, bestKey);
 				}//if p > b	
+				
 			}//transitions
-			//System.out.println(temp);
-			
+			System.out.println(temp);
+			if(bestScore > (startScore/1.5)){
+				System.out.printf("\nBest hit at Temp: %d\n_________________________________\nBest Score: %f0.3\tFor Key: %s\nDecrypted message: %s\n", temp, bestScore, parent, pf.decrypt(parent));
+				if(bestScore > (startScore/1.6)) break;
+			}
+			//System.out.printf("\nBest hit at Temp: %d\n_________________________________\nBest Score: %f0.3\tFor Key: %s\nDecrypted message: %s\n", temp, bestScore, parent, pf.decrypt(parent));
 		}//tempurature
-		
-		return bestScore;
 	}// annealing
 	
 	

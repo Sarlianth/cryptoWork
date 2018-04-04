@@ -22,7 +22,7 @@ import java.util.Map;
  *
  */
 
-public class Playfair extends Crypto {
+public class Playfair {
 
 	private List<Position> positions;
 	private StringBuilder plainText;
@@ -128,10 +128,6 @@ public class Playfair extends Crypto {
 		}else return sb.toString();
 	}// cipherCrack
 
-	@Override
-	public String encrypt(String encryptionKey, String plainText) {
-		return null;
-	}
 	public List<Position> getPositions() {
 		return positions;
 	}

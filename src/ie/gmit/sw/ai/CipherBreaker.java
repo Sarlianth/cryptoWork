@@ -20,20 +20,14 @@ public class CipherBreaker {
 //			System.out.println(i);
 //		}
 	
-			SimulatedAnnealing sa = new SimulatedAnnealing(10, 50000, cipherText);
-		
-		try {
-			do {
-				sa.annealing(cipherText);
-			}while(sa.annealing(cipherText) <= 700);
-			
-		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		int temp = (int)((10 + 0.087 * (cipherText.length() - 84)));
+		System.out.println(temp);
+		SimulatedAnnealing sa = new SimulatedAnnealing(temp/3, 50000, cipherText);
+	
+		sa.annealing(cipherText);
 		
 		long estimatedTime = System.currentTimeMillis() - startTime;
-		System.out.println(estimatedTime + "ms");
+		System.out.println("Execution time: " + (estimatedTime/1000) + "s");
 		
 		
 	}
